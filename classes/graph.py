@@ -62,6 +62,7 @@ class Graph:
             self.edges[edge_name] = existing_edge
             src_node.add_neighbor(tgt_node)
             tgt_node.add_neighbor(src_node)
+            
             src_node.add_edge(existing_edge)
             tgt_node.add_edge(existing_edge)
         
@@ -164,8 +165,10 @@ class Graph:
                 #print(inner_node)
                 deg = self.get_node_by_name(inner_node).get_degree()
                 #print("Node: {} - {}".format(inner_node, deg))
-                prob = 1 - deg / d_max
-                if np.random.random() < prob and randomized_nodes_order[v] != u:
+                prob = (1 - deg) / d_max
+                rd = np.random.random()
+                #print(rd)
+                if rd <= prob and randomized_nodes_order[v] != u:
                     src_node_name = self.GRAPH_NAMES["barabasi"]["node"] + str(u)
                     tgt_node_name = self.GRAPH_NAMES["barabasi"]["node"] + str(randomized_nodes_order[v])
                     edge_name = "{} -> {}".format(src_node_name, tgt_node_name)
