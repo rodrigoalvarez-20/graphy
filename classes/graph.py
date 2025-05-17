@@ -91,10 +91,12 @@ class Graph:
                 if j < n - 1:
                     next_node_name = self.GRAPH_NAMES["grid"]["node"] + str( i * n + j + 1)
                     edge_name = "{} -> {}".format(node_name, next_node_name)
+                    #print("Connecting node {} to {} via {}".format(node_name, next_node_name, edge_name))
                     self.add_edge(edge_name, node_name, next_node_name)
                 if i < m - 1:
                     next_node_name = self.GRAPH_NAMES["grid"]["node"] + str((i + 1) * n + j)
                     edge_name = "{} -> {}".format(node_name, next_node_name)
+                    #print("Connecting node {} to {} via {}".format(node_name, next_node_name, edge_name))
                     self.add_edge(edge_name, node_name, next_node_name)
                 if i < m - 1 and j < n - 1 and use_diagonals:
                     next_node_name = self.GRAPH_NAMES["grid"]["node"] + str((i + 1) * n + j)
