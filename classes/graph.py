@@ -71,6 +71,9 @@ class Graph:
     def getRandomEdge(self):
         return random.choice(list(self.edges.values()))
     
+    def get_random_node(self):
+        return random.choice(list(self.nodes.keys()))
+    
     def create_grid_graph(self, m, n = None, use_diagonals = False):
         # Limpieza de datos
         self.nodes = {}
@@ -132,7 +135,7 @@ class Graph:
         self.edges = {}
         for i in range(n):
             for j in range(n):
-                edge_prob = np.random.random_sample()
+                edge_prob = np.random.rand()
                 if ( edge_prob >= p or p == 1) and j != i:
                     src_node_name = self.GRAPH_NAMES["gilbert"]["node"] + str(i)
                     tgt_node_name = self.GRAPH_NAMES["gilbert"]["node"] + str(j)
@@ -167,7 +170,7 @@ class Graph:
                 #print(inner_node)
                 deg = self.get_node_by_name(inner_node).get_degree()
                 #print("Node: {} - {}".format(inner_node, deg))
-                prob = (1 - deg) / d_max
+                prob = 1 - deg / d_max
                 rd = np.random.random()
                 #print(rd)
                 if rd <= prob and randomized_nodes_order[v] != u:
@@ -211,8 +214,8 @@ class Graph:
         for edge in self.edges.values():
             src_node: Node = edge.source_node
             tgt_node: Node = edge.target_node
-            graph_str += "{} -{} {};\n".format(
-                src_node.id, ">" if self.is_directed else "-", tgt_node.id
+            graph_str += "{} -{} {} [weight={}];\n".format(
+                src_node.id, ">" if self.is_directed else "-", tgt_node.id, edge.weight
             )
         
         graph_str += "}\n"

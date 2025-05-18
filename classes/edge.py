@@ -1,5 +1,5 @@
 from uuid import uuid4
-
+import numpy as np
 from classes.node import Node
 
 class Edge:
@@ -8,11 +8,13 @@ class Edge:
                  source_node: Node = None,
                  target_node: Node = None,
                  initial_attrs: dict = {},
+                 weight: int = None,
                  is_directed: bool = False):
         
         self.id = edge_id if edge_id else uuid4().hex
         self.source_node = source_node
         self.target_node = target_node
+        self.weight = weight if weight and weight >= 0 else np.random.randint(1, 20)
         self.attrs = {
             ## Atributos definidos
             **initial_attrs

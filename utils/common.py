@@ -1,6 +1,7 @@
 import math
 import time 
 import random
+import heapq
 
 def euclidean_distance(first_point: list, second_point: list):
     op_1 = (second_point[0] - first_point[0])**2
@@ -16,7 +17,7 @@ def BFS(bfs_graph, original_graph, delay = 0, start_node = None):
         node_origin = random.choice(list(original_graph.nodes.values()))
     else:
         node_origin = original_graph.get_node_by_name(start_node)
-        
+    
     #root = bfs_graph.add_node(node_origin.id)
     layers.append({ node_origin.id: node_origin })
     nodes_added[node_origin.id] = node_origin
@@ -45,7 +46,6 @@ def BFS(bfs_graph, original_graph, delay = 0, start_node = None):
         if len(next_layer) != 0:
             layers.append(next_layer)
     print("BFS Finish")
-    
 
 def DFS(dfs_graph, original_graph, delay = 0, start_node = None):
     added_nodes = {}
@@ -76,3 +76,39 @@ def DFS_R(initial_node, dfs_graph, added_nodes, delay= 0, layer = 0):
                 time.sleep(delay)
                 
             DFS_R(m, dfs_graph, added_nodes, delay, layer + 1)
+            
+def dijkstra(djk_graph, original_graph, delay = 0, start_node = None):
+    if not start_node:
+        start_node = original_graph.get_random_node()
+    print("Dijkstra start node:", start_node)
+    distances = { node: float("inf") for node in original_graph.nodes }
+    distances[start_node] = 0
+    priority_queue = [(0, start_node)]
+    while priority_queue:
+        curr_dist, curr_node = heapq.heappop(priority_queue)
+        node_name = "{}_{}".format(curr_node, curr_dist)
+        if curr_dist > distances[curr_node]:
+            continue
+        for edg in original_graph.nodes[curr_node].edges:
+            dest_node = edg.source_node.id if edg.source_node.id != curr_node else edg.target_node.id
+            weight = original_graph.edges[edg.id].weight
+            distance = curr_dist + weight
+            if distance < distances[dest_node]:
+                tgt_node = "{}_{}".format(dest_node, distance)
+                edg_name = "{} --> {}".format(node_name, tgt_node)     
+                #print(tgt_node)       
+                # Eliminar si es que existe una arista o conexion con el valor anterior del camino
+                posible_last_node = "_".join(tgt_node.split("_")[:-1]) # Only node Prefix
+                past_nodes = [ x for x in djk_graph.nodes.keys() if "_".join(x.split("_")[:-1]) == posible_last_node ]
+                #print(past_nodes)
+                for pstn in past_nodes:                
+                    for edg in djk_graph.nodes[pstn].edges:
+                        if edg.id != edg_name and djk_graph.edges.get(edg.id):
+                            del djk_graph.edges[edg.id]
+                    del djk_graph.nodes[pstn]
+                distances[dest_node] = distance
+                heapq.heappush(priority_queue, (distance, dest_node))
+                # Una vez que se encuentra la mejor distancia, se conecta el nodo actual con el nodo encontrado            
+                djk_graph.add_edge(edg_name, node_name, tgt_node)
+                if delay > 0:
+                    time.sleep(delay)
