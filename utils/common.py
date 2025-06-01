@@ -2,12 +2,44 @@ import math
 import time 
 import random
 import heapq
+from classes.disjoint_set import DisjointSet
+from collections import defaultdict
 
 def euclidean_distance(first_point: list, second_point: list):
     op_1 = (second_point[0] - first_point[0])**2
     op_2 = (second_point[1] - first_point[1])**2
     return math.sqrt(op_1 + op_2)
-    
+
+def build_adj_matrix(base_graph):
+    adj_graph = {}
+    for node in base_graph.nodes:
+        adj_graph[node] = []
+    for edge in base_graph.edges:
+        source_node = base_graph.edges[edge].source_node
+        target_node = base_graph.edges[edge].target_node
+        weight = base_graph.edges[edge].weight
+        adj_graph[source_node.id].append((target_node.id, weight))
+    return adj_graph
+
+def build_adj_matrix_v2(edges_list):
+    adj = defaultdict(list)
+    for u, v, _ in edges_list:
+        adj[u].append(v)
+        adj[v].append(u)
+    return adj
+
+def dfs_v2(node, visited, adj):
+    visited[node] = True
+    for neighbor in adj[node]:
+        if not visited[neighbor]:
+            dfs_v2(neighbor, visited, adj)
+            
+def is_graph_connected(edges, total_nodes):
+    adj = build_adj_matrix_v2(edges)
+    visited = [False] * total_nodes
+    dfs_v2(0, visited, adj)
+    return all(visited)
+
 def BFS(bfs_graph, original_graph, delay = 0, start_node = None):
     layers = []
     nodes_added = {}    
@@ -112,3 +144,62 @@ def dijkstra(djk_graph, original_graph, delay = 0, start_node = None):
                 djk_graph.add_edge(edg_name, node_name, tgt_node)
                 if delay > 0:
                     time.sleep(delay)
+
+def kruskal_direct(kruskal_graph, original_graph):
+    vertices = list(original_graph.nodes.keys())
+    edges = []
+    for edge in original_graph.edges:
+        source_node = original_graph.edges[edge].source_node.id
+        target_node = original_graph.edges[edge].target_node.id
+        weight =  original_graph.edges[edge].weight
+        edges.append((source_node, target_node, weight))
+    edges.sort(key=lambda x: x[2])
+    ds = DisjointSet(vertices)
+    for u, v, weight in edges:
+        if ds.union(u, v):
+            edge_name = "{} -> {}".format(u, v)
+            added_edge = kruskal_graph.add_edge(edge_name, u, v)
+            added_edge.weight = weight
+            
+def kruskal_inverse(kruskali_graph, original_graph):
+    vertices = list(original_graph.nodes.keys())
+    edges = []
+    for edge in original_graph.edges:
+        source_node = int(original_graph.edges[edge].source_node.id.split("_")[-1])
+        target_node = int(original_graph.edges[edge].target_node.id.split("_")[-1])
+        weight =  original_graph.edges[edge].weight
+        edges.append((source_node, target_node, weight))
+    edges.sort(key=lambda x: x[2], reverse=True)
+    mst_edges = edges[:]
+    for edge in edges:
+        temp_edges = mst_edges[:]
+        temp_edges.remove(edge)
+        if is_graph_connected(temp_edges, len(vertices)):
+            mst_edges.remove(edge)
+    node_prefix = "_".join(original_graph.get_random_node().split("_")[:-1])
+    for edg in mst_edges:
+        source_node = "{}_{}".format(node_prefix, edg[0])
+        target_node = "{}_{}".format(node_prefix, edg[1])
+        edge_name = "{} --> {}".format(source_node, target_node)
+        added_edge = kruskali_graph.add_edge(edge_name, source_node, target_node)
+        added_edge.weight = edg[-1]
+
+def prim_alg(out_graph, original_graph, starting_node):
+    adj_graph = build_adj_matrix(original_graph)
+    visited = set()
+    min_heap = [(0, starting_node)]
+    prev = {}
+    while min_heap and len(visited) < len(adj_graph):
+        weight, u = heapq.heappop(min_heap)
+        if u in visited:
+            continue
+        visited.add(u)
+        if weight != 0:
+            edge_name = "{} --> {}".format(prev[u], u)
+            added_edge = out_graph.add_edge(edge_name, prev[u], u)
+            added_edge.weight = weight
+        for v, w in adj_graph[u]:
+            if v not in visited:
+                heapq.heappush(min_heap, (w, v))
+                prev[v] = u
+                

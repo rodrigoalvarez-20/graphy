@@ -170,7 +170,7 @@ class Graph:
                 #print(inner_node)
                 deg = self.get_node_by_name(inner_node).get_degree()
                 #print("Node: {} - {}".format(inner_node, deg))
-                prob = 1 - deg / d_max
+                prob = (1 - deg) / d_max
                 rd = np.random.random()
                 #print(rd)
                 if rd <= prob and randomized_nodes_order[v] != u:
