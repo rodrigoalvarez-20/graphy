@@ -7,8 +7,7 @@ import multiprocessing
 import time
 
 # --- Parámetros globales para la grilla de optimización de repulsión ---
-GRID_CELL_SIZE = 100  # Tamaño de cada celda de la grilla en píxeles
-
+GRID_CELL_SIZE = 50  # Tamaño de cada celda de la grilla en píxeles
 
 def spring_frame_worker(
     graph_data,
@@ -319,9 +318,9 @@ def draw_graph(
     stop_simulation_in_worker = (
         False  # Esto controla si el worker debe pausar sus cálculos
     )
-    min_move = 0.05
+    min_move = 2
     cuenta = 0
-    cuenta_limite = 60  # Más frames consecutivos sin movimiento relevante para detener (para mayor estabilidad)
+    cuenta_limite = 20  # Más frames consecutivos sin movimiento relevante para detener (para mayor estabilidad)
 
     while run:
         for event in pygame.event.get():
@@ -432,7 +431,7 @@ def draw_graph(
 
         pygame.display.flip()
         clock.tick(
-            60
+            30
         )  # Limitar a 60 FPS para no consumir CPU innecesariamente en el renderizado
 
     # Al salir del bucle principal, enviar señal de parada al proceso worker y esperar a que termine
@@ -443,13 +442,31 @@ def draw_graph(
 
 if __name__ == "__main__":
     multiprocessing.freeze_support()
-
-    g = Graph("demo")
-    # Aumentar el número de nodos para probar el cuello de botella
-    # g.create_erdos_renyi_graph(500, 1500) # Más nodos, menos aristas (sparse)
-    g.create_gilbert_graph(
-        500, 0.995
-    )  # Grafos más densos son más problemáticos para N^2 repulsión
-    # g.create_barabasi_graph(1000) # Pruebas con 1000 nodos o más
+    g = Graph("SPRING_GRAPH")
+    
+    # GRID GRAPH
+    #g.create_grid_graph(10, 10)
+    #g.create_grid_graph(50, 10)
+    
+    # ERDOS RENYI
+    #g.create_erdos_renyi_graph(100, 130)
+    #g.create_erdos_renyi_graph(500, 530)
+    
+    # Gilbert
+    #g.create_gilbert_graph(100, 0.95)
+    #g.create_gilbert_graph(500, 0.992)
+    
+    # Geo Graph
+    #g.create_geo_graph(100, 0.18)
+    #g.create_geo_graph(500, 0.1)
+    
+    # Barabasi
+    #g.create_barabasi_graph(100, 10)
+    #g.create_barabasi_graph(500, 5)
+    
+    # Dorogov
+    #g.create_dorogov_graph(100)
+    g.create_dorogov_graph(500)
+    
     print(len(g.nodes), len(g.edges))
     draw_graph(g)
