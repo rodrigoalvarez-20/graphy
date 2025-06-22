@@ -445,7 +445,7 @@ if __name__ == "__main__":
     g = Graph("SPRING_GRAPH")
     
     # GRID GRAPH
-    #g.create_grid_graph(10, 10)
+    g.create_grid_graph(10, 10)
     #g.create_grid_graph(50, 10)
     
     # ERDOS RENYI
@@ -466,7 +466,7 @@ if __name__ == "__main__":
     
     # Dorogov
     #g.create_dorogov_graph(100)
-    g.create_dorogov_graph(500)
+    #g.create_dorogov_graph(500)
     
     print(len(g.nodes), len(g.edges))
     draw_graph(g)

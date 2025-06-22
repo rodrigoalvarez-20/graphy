@@ -154,6 +154,7 @@ class Graph:
                     u = nodes_list[i]
                     v = nodes_list[j]
                     point_dist = euclidean_distance(u.pos, v.pos)
+                    #print(point_dist)
                     if point_dist <= rad:
                         edge_name = "{} -> {}".format(u.id, v.id)
                         self.add_edge(edge_name, u.id, v.id)

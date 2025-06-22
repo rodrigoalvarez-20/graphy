@@ -12,10 +12,11 @@ class Node:
         self.id = node_id if node_id not in ["", None] else uuid4().hex
         self.edges = set(initial_edges) if initial_edges != None else set()
         self.neighbors = set(initial_neighbors) if initial_neighbors != None else set()
-        self.pos = initial_position if initial_position != None else round(np.random.random(), 3), round(np.random.random(), 3)
+        self.pos = initial_position if initial_position != None else np.random.randn(2) #np.zeros(2) #round(np.random.random(), 3), round(np.random.random(), 3)
         self.attrs = {
             # Aqui irán todos los valores por defecto de los atributos
-            **initial_attrs         # Agregar o sobreescribir los parametros pasados al nodo
+            **initial_attrs,         # Agregar o sobreescribir los parametros pasados al nodo
+            "velocity": 0
         }
 
     def get_edges(self):

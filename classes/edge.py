@@ -17,7 +17,7 @@ class Edge:
         self.weight = weight if weight and weight >= 0 else np.random.randint(1, 20)
         self.attrs = {
             ## Atributos definidos
-            **initial_attrs
+            **initial_attrs,
         }
         self.is_directed = is_directed
         
